@@ -1,0 +1,64 @@
+int leftSensorPin = 2;    // Digital pin connected to left IR sensor
+int rightSensorPin = 3;   // Digital pin connected to right IR sensor
+int leftMotorPin1 = 4;   // Motor driver left side, pin 1
+int leftMotorPin2 = 5;   // Motor driver left side, pin 2
+int rightMotorPin1 = 6;  // Motor driver right side, pin 1
+int rightMotorPin2 = 7;  // Motor driver right side, pin 2
+
+void setup() {
+  pinMode(leftSensorPin, INPUT);
+  pinMode(rightSensorPin, INPUT);
+  pinMode(leftMotorPin1, OUTPUT);
+  pinMode(leftMotorPin2, OUTPUT);
+  pinMode(rightMotorPin1, OUTPUT);
+  pinMode(rightMotorPin2, OUTPUT);
+}
+
+void loop() {
+  int leftSensor = digitalRead(leftSensorPin);
+  int rightSensor = digitalRead(rightSensorPin);
+
+  if (leftSensor == HIGH && rightSensor == HIGH) {
+    // Both sensors on white: Move forward
+    moveForward();
+  } else if (leftSensor == LOW && rightSensor == HIGH) {
+    // Left sensor on black, right on white: Turn left
+    turnLeft();
+  } else if (leftSensor == HIGH && rightSensor == LOW) {
+    // Left sensor on white, right on black: Turn right
+    turnRight();
+  } else {
+    // Both sensors on black: Stop
+    stopRobot();
+  }
+}
+
+void moveForward() {
+  digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+}
+
+void turnLeft() {
+  digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(leftMotorPin2, HIGH);
+  digitalWrite(rightMotorPin1, HIGH);
+  digitalWrite(rightMotorPin2, LOW);
+  delay(50); // Adjust delay for turning speed
+}
+
+void turnRight() {
+  digitalWrite(leftMotorPin1, HIGH);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, LOW);
+  digitalWrite(rightMotorPin2, HIGH);
+  delay(50); // Adjust delay for turning speed
+}
+
+void stopRobot() {
+  digitalWrite(leftMotorPin1, LOW);
+  digitalWrite(leftMotorPin2, LOW);
+  digitalWrite(rightMotorPin1, LOW);
+  digitalWrite(rightMotorPin2, LOW);
+}
