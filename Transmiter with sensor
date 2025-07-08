@@ -1,0 +1,41 @@
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+#define TRIG_PIN 2
+#define ECHO_PIN 3
+
+RF24 radio(9, 10); 
+const byte address[6] = "00001";
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  radio.begin();
+  radio.setPALevel(RF24_PA_LOW);
+  radio.openWritingPipe(address);
+  radio.stopListening();
+}
+
+void loop() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  float distance = duration * 0.034 / 2;
+
+  bool objectDetected = distance < 20.0; 
+  radio.write(&objectDetected, sizeof(objectDetected));
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.print(" cm -> Sent: ");
+  Serial.println(objectDetected ? "ON" : "OFF");
+
+  delay(500);
+}
