@@ -1,0 +1,46 @@
+#include <Servo.h>
+
+const int trigPin = 9;
+const int echoPin = 10;
+const int maxDistance = 30;    
+const int minAngle = 0;
+const int maxAngle = 180;       
+
+Servo myServo;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  myServo.attach(6);           
+  Serial.begin(9600);          
+}
+
+void loop() {
+  long duration;
+  int distance;
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+
+  
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if (distance > 0 && distance <= maxDistance) {
+    int angle = map(distance, maxDistance, 0, minAngle, maxAngle);
+    angle = constrain(angle, minAngle, maxAngle);  
+    myServo.write(angle);
+  } else {
+    myServo.write(minAngle); 
+  }
+
+  delay(200);  
+}
